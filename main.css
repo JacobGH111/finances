@@ -1,0 +1,11 @@
+.transfer{
+	color:red;
+}
+
+.transaction .value{
+	font-size: 30px;
+}
+
+.transaction:hover{
+	background-color:#eeeeee;
+}
