@@ -15,7 +15,10 @@
           <div class="row">
             <div class="col-xs-6">
               <span class="value">${{transaction.value}}</span> - <span class="text-muted">{{transaction.name}}</span>
-              <div class="text-muted">{{transaction.source}}</div>
+              <div>
+              <span class="date">{{transaction.date}}</span> |
+              <span class="text-muted">{{transaction.source}}</span>
+              </div>
             </div>
             <div class="col-xs-6">
               <div ng-show="transaction.transfer">
@@ -61,17 +64,20 @@
         {
           name:"transaction 1",
           source: "citibank checking",
-          value: 51
+          value: 51,
+          date: "2017-6-23"
         },
         {
           name:"transaction 2",
           source: "citibank credit card",
-          value: 30
+          value: 30,
+          date: "2017-6-28"
         },
         {
           name: "transaction 3",
           source: "BoFA checking",
-          value: 100
+          value: 100,
+          date: "2017-7-28"
         }
 
       ]
