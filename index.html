@@ -12,8 +12,19 @@
       <h2>Transactions</h2>
       <div class="row">
         <div class="transaction col-xs-12" ng-class="{'transfer':transaction.transfer}" ng-click=toggleTransfer(transaction) ng-repeat="transaction in transactions">
-          <span class="value">${{transaction.value}}</span> - <span class="text-muted">{{transaction.name}}</span>
-          <div class="text-muted">{{transaction.source}}</div>
+          <div class="row">
+            <div class="col-xs-6">
+              <span class="value">${{transaction.value}}</span> - <span class="text-muted">{{transaction.name}}</span>
+              <div class="text-muted">{{transaction.source}}</div>
+            </div>
+            <div class="col-xs-6">
+              <div ng-show="transaction.transfer">
+                Wealth Transfer
+              </div>
+            </div>
+
+          </div>
+
         </div>
       </div>
 
