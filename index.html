@@ -1,87 +1,104 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="UTF-8">
     <title>Finances App</title>
-  </head>
-  <script src="node_modules/angular/angular.js"></script>
-  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css"/>
-  <link rel="stylesheet" href="stylesheets_build/main.css"/>
-  <body ng-app="app" ng-controller="controller">
+    <script src="node_modules/lodash/lodash.js"></script>
+    <script src="node_modules/angular/angular.js"></script>
+    <script src="node_modules/moment/moment.js"></script>
+</head>
+<link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="stylesheets_build/main.css" />
+
+<body ng-app="app" ng-controller="controller">
     <div class="container">
-      <h2>Transactions</h2>
-      <div class="row">
-        <div class="transaction col-xs-12" ng-class="{'transfer':transaction.transfer}" ng-click=toggleTransfer(transaction) ng-repeat="transaction in transactions">
-          <div class="row">
-            <div class="col-xs-6">
-              <span class="value">${{transaction.value}}</span> - <span class="text-muted">{{transaction.name}}</span>
-              <div>
-              <span class="date">{{transaction.date}}</span> |
-              <span class="text-muted">{{transaction.source}}</span>
-              </div>
+        <h2>Transactions</h2>
+        <div class="row" ng-repeat="date in transactions.datesSorted()">
+            <div class="col-xs-12 text-center date">{{moment(date).format('ll')}}</div>
+            <div class="transaction col-xs-12" ng-class="{'transfer':transaction.transfer}" ng-click=toggleTransfer(transaction) ng-repeat="transaction in transactions.byDate()[date]">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <span class="value">${{transaction.value}}</span> - <span class="text-muted">{{transaction.name}}</span>
+                        <div>
+                            <span class="date">{{transaction.date}}</span> |
+                            <span class="text-muted">{{transaction.source}}</span>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <div ng-show="transaction.transfer">
+                            Wealth Transfer
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-xs-6">
-              <div ng-show="transaction.transfer">
-                Wealth Transfer
-              </div>
-            </div>
-
-          </div>
-
         </div>
-      </div>
-
-      <h3>Grand Totals:</h3>
-      <h2>${{total}}</h2>
-
-
-
+    </div>
+    <h3>Grand Totals:</h3>
+    <h2>${{total}}</h2>
     </div>
     <script>
     app = angular.module('app', [])
-    app.controller('controller', function($scope){
+    app.controller('controller', function($scope) {
 
-      $scope.toggleTransfer = function(transaction){
-        transaction.transfer = !transaction.transfer;
-      }
-
-      $scope.getTotal = function(){
-        let total = 0;
-        for(let i=0; i<$scope.transactions.length; i++){
-          let transaction = $scope.transactions[i]
-          if(!transaction.transfer){
-            total += transaction.value;
-          }
-        }
-        return total;
-      }
-
-      $scope.$watch('transactions', function(oldVal, newVal){
-        $scope.total = $scope.getTotal();
-      }, true)
-
-      $scope.transactions = [
-        {
-          name:"transaction 1",
-          source: "citibank checking",
-          value: 51,
-          date: "2017-6-23"
-        },
-        {
-          name:"transaction 2",
-          source: "citibank credit card",
-          value: 30,
-          date: "2017-6-28"
-        },
-        {
-          name: "transaction 3",
-          source: "BoFA checking",
-          value: 100,
-          date: "2017-7-28"
+        $scope.toggleTransfer = function(transaction) {
+            transaction.transfer = !transaction.transfer;
         }
 
-      ]
+        $scope.getTotal = function() {
+            let total = 0;
+            for(transaction of $scope.transactions.list()){
+              if(!transaction.transfer){
+                total += transaction.value;
+              }
+            }
+            return total;
+        }
+
+        $scope.$watch('transactions.list()', function(oldVal, newVal) {
+            $scope.total = $scope.getTotal();
+        }, true)
+
+        $scope._ = _
+        $scope.moment = moment;
+
+
+        let transactions = [{
+            name: "transaction 1",
+            source: "citibank checking",
+            value: 51,
+            date: '2017-07-01'
+        }, {
+            name: "transaction 2",
+            source: "citibank credit card",
+            value: 30,
+            date: '2017-07-01'
+        }, {
+            name: "transaction 3",
+            source: "BoFA checking",
+            value: 100,
+            date: '2017-07-02'
+        }, {
+            name: "transaction 4",
+            source: "BoFA checking",
+            value: 25,
+            date: '2017-07-04'
+        }]
+
+        let byDate = function() {
+            return _.groupBy(transactions, 'date')
+        };
+        $scope.transactions = {
+            list: function() {
+                return transactions
+            },
+            byDate: byDate,
+            datesSorted: function() {
+                return _.keys(byDate()).sort()
+            }
+        }
     })
     </script>
-  </body>
+</body>
+
 </html>
